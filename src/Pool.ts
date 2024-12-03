@@ -35,7 +35,7 @@ function setProperties(config: IJDBConfig) {
   }
 
   if (config.password && !properties.getPropertySync('password')) {
-    properties.putSync('password', config.password);
+    properties.putSync('password', config.password());
   }
 
   return properties;
@@ -51,7 +51,7 @@ export interface ConnObj {
 export interface IJDBConfig {
   url: any;
   user?: string;
-  password?: string;
+  password?: any;
   drivername?: string;
   minpoolsize?: number;
   maxpoolsize?: number;
@@ -155,7 +155,7 @@ export class Pool {
 
         return resolve(connobj);
       }
-      const conn = getConnectionSync(this.config.url, this.config.props);
+      const conn = getConnectionSync(this.config.url, this.config.props, this.config.password);
       const c = new Connection(conn);
       const connobj = {
         uuid: uuidv4(),
@@ -183,7 +183,7 @@ export class Pool {
           this.config.user,
           this.config.password,
         ).getConnectionDS()
-      : getConnectionSync(this.config.url, this.config.props);
+      : getConnectionSync(this.config.url, this.config.props, this.config.password);
     const c = new Connection(conn);
     const connobj = {
       uuid: uuidv4(),

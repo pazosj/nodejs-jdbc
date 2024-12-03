@@ -6,18 +6,10 @@ const java = getInstance();
 const DM = 'java.sql.DriverManager';
 
 export function getConnection(...args: any[]) {
-  // Check arguments for validity, and return error if invalid
-  const validArgs =
-    args[0] &&
-    // args[1] (propsoruser) and args[2] (password) can both be falsey
-    (!(args[1] || args[2]) ||
-      // args[1] (propsoruser) and args[2] (password) can both be strings
-      (isString(args[1]) && isString(args[2])) ||
-      // args[1] (propsoruser) can be an object if args[2] (password) is falsey
-      (isObject(args[1]) && !args[2]));
-
-  if (!validArgs) {
-    return new Error('INVALID ARGUMENTS');
+  //allow for password to be a function
+  if (typeof args[2] === 'function') {
+    args[1].putSync('password', args[2]());
+    args.pop();
   }
 
   // Add DM and 'getConnection' string onto beginning of args
@@ -30,18 +22,10 @@ export function getConnection(...args: any[]) {
 }
 
 export function getConnectionSync(...args: any[]) {
-  // Check arguments for validity, and return error if invalid
-  const validArgs =
-    args[0] &&
-    // args[1] (propsoruser) and args[2] (password) can both be falsey
-    (!(args[1] || args[2]) ||
-      // args[1] (propsoruser) and args[2] (password) can both be strings
-      (isString(args[1]) && isString(args[2])) ||
-      // args[1] (propsoruser) can be an object if args[2] (password) is falsey
-      (isObject(args[1]) && !args[2]));
-
-  if (!validArgs) {
-    return new Error('INVALID ARGUMENTS');
+  //allow for password to be a function
+  if (typeof args[2] === 'function') {
+    args[1].putSync('password', args[2]());
+    args.pop();
   }
 
   // Add DM and 'getConnection' string onto beginning of args
